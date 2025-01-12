@@ -1,5 +1,4 @@
-package Scenario2Search;
-
+package Scenario10Settings;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 
-public class SeleniumSearch {
+public class Selenium10Settings {
     private static WebDriver webDriver;
     private static String baseUrl;
 
@@ -34,6 +33,7 @@ public class SeleniumSearch {
         WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
         WebElement passwordField = webDriver.findElement(By.name("password"));
         WebElement loginButton = webDriver.findElement(By.cssSelector("button[type='submit']"));
+
         usernameField.sendKeys("wonumity@polkaroad.net");
         passwordField.sendKeys("11.ajdin.11Ig");
         loginButton.click();
@@ -42,49 +42,47 @@ public class SeleniumSearch {
         assertTrue(webDriver.getCurrentUrl().contains("instagram.com"), "Login failed with valid credentials.");
     }
 
-    //Test One
+    // Test Case: Clicking on Settings Icon
     @Test
-    public void testSearchExistingUser() {
+    public void testClickSettingsIcon() {
         login();
 
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
-        // Click on the search icon to activate the search bar
-        WebElement searchIcon = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("svg[aria-label='Search']")));
-        searchIcon.click();
-        System.out.println("Search icon clicked.");
+        // Wait until the Settings icon is clickable
+        WebElement settingsIcon = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(@class, 'x4k7w5x')]/div/a[contains(@href, '#')]")));
 
-        // Wait for the search bar to appear
-        WebElement searchBar = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[placeholder='Search']")));
-        System.out.println("Search bar is visible.");
-
-        // Enter the username to search
-        String usernameToSearch = "ajdinomeragic";
-        searchBar.sendKeys(usernameToSearch);
-
-        // Wait for the first search result to appear
-        WebElement firstResult = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href='/ajdinomeragic/']")));
-        System.out.println("First search result located.");
-
-        // Extract the username from the first result
-        String resultUsername = firstResult.findElement(By.cssSelector("span[dir='auto']")).getText();
-
-        // Click on the first result
-        firstResult.click();
-
-        // Wait for the profile page to load
-        WebElement profileUsername = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("header h2")));
-
-        // Assert that the profile username matches the searched username
-        assertTrue(resultUsername.equalsIgnoreCase(usernameToSearch),
-                "The searched username was not found in the results. Expected: " + usernameToSearch + ", Found: " + resultUsername);
-        assertTrue(profileUsername.getText().equalsIgnoreCase(usernameToSearch),
-                "The profile page username does not match the searched username. Expected: " + usernameToSearch + ", Found: " + profileUsername.getText());
-
-        System.out.println("Test passed: User exists.");
+        // Click the Settings icon
+        settingsIcon.click();
+        System.out.println("Settings icon clicked successfully.");
     }
 
+    // Test Case: Clicking on Settings Link and Choosing an Option
+    @Test
+    public void testClickSettingsLinkAndChooseOption() {
+        testClickSettingsIcon();
 
+        WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
+
+        // Wait until the new Settings link is clickable
+        WebElement settingsLink = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@href='/accounts/edit/'][contains(@class, 'x1i10hfl')]")));
+
+        // Click the Settings link
+        settingsLink.click();
+        System.out.println("Settings link clicked successfully.");
+
+        // Wait for the Settings page to load, and confirm the URL
+        wait.until(ExpectedConditions.urlContains("accounts/edit"));
+        assertTrue(webDriver.getCurrentUrl().contains("accounts/edit"), "Failed to open the Settings page.");
+
+        // Choose another option like Logout (if available)
+        WebElement logoutLink = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[@href='/accounts/logout/']"))); // Adjust the XPath if needed
+        logoutLink.click();
+        System.out.println("Logout option clicked successfully.");
+
+        // Output a notification that the element was clicked
+        System.out.println("Test passed: The Settings and Logout options were clickable.");
+    }
 
     @AfterAll
     public static void tearDown() {

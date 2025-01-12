@@ -1,5 +1,4 @@
-package Scenario2Search;
-
+package Scenario9Threads;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -12,8 +11,9 @@ import org.openqa.selenium.support.ui.WebDriverWait;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
+import java.util.Set;
 
-public class SeleniumSearch {
+public class Selenium9Threads {
     private static WebDriver webDriver;
     private static String baseUrl;
 
@@ -34,6 +34,7 @@ public class SeleniumSearch {
         WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
         WebElement passwordField = webDriver.findElement(By.name("password"));
         WebElement loginButton = webDriver.findElement(By.cssSelector("button[type='submit']"));
+
         usernameField.sendKeys("wonumity@polkaroad.net");
         passwordField.sendKeys("11.ajdin.11Ig");
         loginButton.click();
@@ -42,49 +43,41 @@ public class SeleniumSearch {
         assertTrue(webDriver.getCurrentUrl().contains("instagram.com"), "Login failed with valid credentials.");
     }
 
-    //Test One
+    //Test Case Two Opening Specific Element (Threads Link)
     @Test
-    public void testSearchExistingUser() {
+    public void testOpenThreadsLink() {
         login();
 
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
-        // Click on the search icon to activate the search bar
-        WebElement searchIcon = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("svg[aria-label='Search']")));
-        searchIcon.click();
-        System.out.println("Search icon clicked.");
+        // Wait until the Threads link is clickable
+        WebElement threadsLink = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//span[contains(@class, 'x4k7w5x')]/div/a[contains(@href, 'https://www.threads.net')]")));
 
-        // Wait for the search bar to appear
-        WebElement searchBar = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[placeholder='Search']")));
-        System.out.println("Search bar is visible.");
+        // Open the link in a new tab using JavaScript
+        JavascriptExecutor js = (JavascriptExecutor) webDriver;
+        js.executeScript("window.open(arguments[0], '_blank');", threadsLink.getAttribute("href"));
+        System.out.println("Threads link opened in a new tab.");
 
-        // Enter the username to search
-        String usernameToSearch = "ajdinomeragic";
-        searchBar.sendKeys(usernameToSearch);
+        // Switch to the new tab
+        Set<String> allWindows = webDriver.getWindowHandles();
+        String originalWindow = webDriver.getWindowHandle();
 
-        // Wait for the first search result to appear
-        WebElement firstResult = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href='/ajdinomeragic/']")));
-        System.out.println("First search result located.");
+        // Switch to the new tab
+        for (String windowHandle : allWindows) {
+            if (!windowHandle.equals(originalWindow)) {
+                webDriver.switchTo().window(windowHandle);
+                break;
+            }
+        }
 
-        // Extract the username from the first result
-        String resultUsername = firstResult.findElement(By.cssSelector("span[dir='auto']")).getText();
+        // Wait for the Threads page to load
+        wait.until(ExpectedConditions.urlContains("threads.net"));
 
-        // Click on the first result
-        firstResult.click();
+        // Assert that the URL contains 'threads' to verify we are on the Threads page
+        assertTrue(webDriver.getCurrentUrl().contains("threads.net"), "Failed to navigate to the Threads page.");
 
-        // Wait for the profile page to load
-        WebElement profileUsername = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("header h2")));
-
-        // Assert that the profile username matches the searched username
-        assertTrue(resultUsername.equalsIgnoreCase(usernameToSearch),
-                "The searched username was not found in the results. Expected: " + usernameToSearch + ", Found: " + resultUsername);
-        assertTrue(profileUsername.getText().equalsIgnoreCase(usernameToSearch),
-                "The profile page username does not match the searched username. Expected: " + usernameToSearch + ", Found: " + profileUsername.getText());
-
-        System.out.println("Test passed: User exists.");
+        System.out.println("Test passed: Threads link opened successfully in a new tab.");
     }
-
-
 
     @AfterAll
     public static void tearDown() {

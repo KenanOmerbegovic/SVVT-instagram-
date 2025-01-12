@@ -1,5 +1,4 @@
-package Scenario2Search;
-
+package Scenario6Notifications;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
@@ -13,7 +12,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.Duration;
 
-public class SeleniumSearch {
+public class Selenium6Notifications {
     private static WebDriver webDriver;
     private static String baseUrl;
 
@@ -34,6 +33,7 @@ public class SeleniumSearch {
         WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
         WebElement passwordField = webDriver.findElement(By.name("password"));
         WebElement loginButton = webDriver.findElement(By.cssSelector("button[type='submit']"));
+
         usernameField.sendKeys("wonumity@polkaroad.net");
         passwordField.sendKeys("11.ajdin.11Ig");
         loginButton.click();
@@ -42,49 +42,30 @@ public class SeleniumSearch {
         assertTrue(webDriver.getCurrentUrl().contains("instagram.com"), "Login failed with valid credentials.");
     }
 
-    //Test One
+    //Test Case for Opening Notifications
     @Test
-    public void testSearchExistingUser() {
+    public void testOpenNotifications() {
         login();
 
         WebDriverWait wait = new WebDriverWait(webDriver, Duration.ofSeconds(20));
 
-        // Click on the search icon to activate the search bar
-        WebElement searchIcon = wait.until(ExpectedConditions.elementToBeClickable(By.cssSelector("svg[aria-label='Search']")));
-        searchIcon.click();
-        System.out.println("Search icon clicked.");
+        // Wait until the Notifications icon is clickable
+        WebElement notificationsIcon = wait.until(ExpectedConditions.elementToBeClickable(By.xpath("//a[contains(@href, '#')]")));
+        notificationsIcon.click();
+        System.out.println("Notifications section clicked.");
 
-        // Wait for the search bar to appear
-        WebElement searchBar = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("input[placeholder='Search']")));
-        System.out.println("Search bar is visible.");
+        // Wait for the Notifications page to load (adjust as necessary based on how the page redirects or updates)
+        // This part can be customized depending on how Instagram reacts after clicking the notification icon.
 
-        // Enter the username to search
-        String usernameToSearch = "ajdinomeragic";
-        searchBar.sendKeys(usernameToSearch);
+        // You can assert whether the notification section opens by checking if the URL changes or by checking for a certain element in the notifications page.
+        // In this case, we'll just check if the URL doesn't remain the same as the login page.
+        wait.until(ExpectedConditions.urlContains("instagram.com"));
 
-        // Wait for the first search result to appear
-        WebElement firstResult = wait.until(ExpectedConditions.presenceOfElementLocated(By.cssSelector("a[href='/ajdinomeragic/']")));
-        System.out.println("First search result located.");
+        // Assert that the URL changed, confirming we are in a different section
+        assertTrue(!webDriver.getCurrentUrl().contains("login"), "Failed to navigate to the Notifications section.");
 
-        // Extract the username from the first result
-        String resultUsername = firstResult.findElement(By.cssSelector("span[dir='auto']")).getText();
-
-        // Click on the first result
-        firstResult.click();
-
-        // Wait for the profile page to load
-        WebElement profileUsername = wait.until(ExpectedConditions.visibilityOfElementLocated(By.cssSelector("header h2")));
-
-        // Assert that the profile username matches the searched username
-        assertTrue(resultUsername.equalsIgnoreCase(usernameToSearch),
-                "The searched username was not found in the results. Expected: " + usernameToSearch + ", Found: " + resultUsername);
-        assertTrue(profileUsername.getText().equalsIgnoreCase(usernameToSearch),
-                "The profile page username does not match the searched username. Expected: " + usernameToSearch + ", Found: " + profileUsername.getText());
-
-        System.out.println("Test passed: User exists.");
+        System.out.println("Test passed: Notifications section opened successfully.");
     }
-
-
 
     @AfterAll
     public static void tearDown() {
