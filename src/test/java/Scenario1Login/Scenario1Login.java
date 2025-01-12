@@ -117,7 +117,7 @@ public class Scenario1Login {
         WebElement passwordField = webDriver.findElement(By.name("password"));
         WebElement loginButton = webDriver.findElement(By.cssSelector("button[type='submit']"));
 
-        usernameField.sendKeys("daongernoodles@gmail.com");
+        usernameField.sendKeys("veyitom421@suggets.com");
         passwordField.sendKeys("11.ajdin.11Instagram");
         loginButton.click();
 
