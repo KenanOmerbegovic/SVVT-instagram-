@@ -34,9 +34,8 @@ public class SeleniumSearch {
         WebElement usernameField = wait.until(ExpectedConditions.visibilityOfElementLocated(By.name("username")));
         WebElement passwordField = webDriver.findElement(By.name("password"));
         WebElement loginButton = webDriver.findElement(By.cssSelector("button[type='submit']"));
-
         usernameField.sendKeys("wonumity@polkaroad.net");
-        passwordField.sendKeys("11.ajdin.11Instagram");
+        passwordField.sendKeys("11.ajdin.11Ig");
         loginButton.click();
 
         wait.until(ExpectedConditions.urlContains("instagram.com"));
